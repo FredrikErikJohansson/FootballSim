@@ -1,2 +1,6 @@
 Debug/
-Release/
+FootballSim.vcxproj
+FootballSim.vcxproj.filters
+FootballSim.vcxproj.user
+glew32.dll
+.vs

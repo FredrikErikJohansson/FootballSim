@@ -1,2 +1,0 @@
-# FootballSim
-Football Simulator
