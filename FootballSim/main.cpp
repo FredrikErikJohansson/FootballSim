@@ -55,7 +55,10 @@ float maxSize = 0.8f;
 float minSize = 0.1f;
 
 glm::vec3 spinDirection = glm::vec3(0.0f, 1.0f, 0.0f);
-float angularVelocity123 = 80.0f;
+float angularVelocity = 80.0f;
+float initVelocity = 36.0f;
+float xAngle = 0.0f;
+float yAngle = 45.0f;
 
 // Vertex Shader code
 static const char* vShader = "Shaders/shader.vert";
@@ -74,10 +77,10 @@ void CreateShaders()
 int main()
 {
 	//W,Vb,xAngle,yAngle,spinDir
-	Ball myBall(angularVelocity123, 36.0f, 0.0f, 45.0f, spinDirection);
+	Ball myBall(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
 	
 
-	mainWindow = Window(800, 600);
+	mainWindow = Window(WIDTH, HEIGHT);
 	mainWindow.Initialise();
 
 	CreateShaders();
@@ -137,15 +140,20 @@ int main()
 		{
 			myBall.kick();
 		}
+		if (keys[GLFW_KEY_R])
+		{
+			myBall.reset(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
+		}
 		if (myBall.getHasBeenKicked())
 		{
 			model = glm::translate(model, myBall.euler(deltaTime));
 			rotate -= myBall.getAngularVelocity() / 1000.0f;
-			spinDirection = myBall.getSpinDirection();
-			model = glm::rotate(model, rotate, spinDirection);
+			glm::vec3 spinDirectionDummy = myBall.getSpinDirection();
+			model = glm::rotate(model, rotate, spinDirectionDummy);
 		}
 
-		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+		model = glm::scale(model, glm::vec3(0.04f, 0.04f, 0.04f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
@@ -157,8 +165,8 @@ int main()
 		nanosuit.RenderModel();
 
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(-80.0f, 0.0f, 130.0f));
-		model = glm::scale(model, glm::vec3(0.0017f, 0.0015f, 0.0017f));
+		model = glm::translate(model, glm::vec3(-80.0f, 0.0f, 120.0f));
+		model = glm::scale(model, glm::vec3(1.8f, 1.8f, 1.8f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		stadiumMod.RenderModel();
 		
