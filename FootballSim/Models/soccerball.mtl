@@ -12,10 +12,10 @@ newmtl white
 	Kd 0.152941 0.152941 0.152941
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka maps\soccerball_colorwhite.jpg
-	map_Kd maps\soccerball_colorwhite.jpg
-	map_bump maps\soccerball_bump.jpg
-	bump maps\soccerball_bump.jpg
+	map_Ka maps\soccerball_colorwhite.png
+	map_Kd maps\soccerball_colorwhite.png
+	map_bump maps\soccerball_bump.png
+	bump maps\soccerball_bump.png
 
 newmtl black
 	Ns 10.000000
@@ -28,7 +28,7 @@ newmtl black
 	Kd 0.000000 0.000000 0.000000
 	Ks 0.054000 0.054000 0.054000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka maps\soccerball_colorblack.jpg
-	map_Kd maps\soccerball_colorblack.jpg
-	map_bump maps\soccerball_bump.jpg
-	bump maps\soccerball_bump.jpg
+	map_Ka maps\soccerball_colorblack.png
+	map_Kd maps\soccerball_colorblack.png
+	map_bump maps\soccerball_bump.png
+	bump maps\soccerball_bump.png
