@@ -10,6 +10,8 @@ public:
 
 	glm::vec3 euler(GLfloat deltaTime);
 	glm::vec3 getPosition();
+	glm::vec3 getSpinDirection();
+	float getAngularVelocity();
 	void kick();
 	bool getHasBeenKicked();
 
@@ -22,6 +24,7 @@ private:
 	const float dragConst = 0.2f;
 	const float gravity = 9.82f;
 	const float mass = 0.45f;
+	const float COR = 0.6f;
 
 	float angularVelocity;
 	float initVelocity;

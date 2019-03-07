@@ -40,7 +40,17 @@ glm::vec3 Ball::euler(GLfloat deltaTime)
 	acceleration.y = (-mass*gravity-K * velocityAbs * velocity.y - Kl * (spinDirection.z*velocity.x - spinDirection.x*velocity.z)) / mass;
 	acceleration.z = (-K * velocityAbs*velocity.z - Kl * (spinDirection.x*velocity.y - spinDirection.y*velocity.x)) / mass;
 
-	if (position.y < 0.0f) return position;
+	if (position.y < 0.0f)
+	{
+		velocity.x = COR*velocity.x;
+		velocity.y = -COR*velocity.y;
+		velocity.z = COR*velocity.z;
+		position.y = 0.0f;
+		spinDirection = glm::vec3(normalize(velocity));
+		angularVelocity -= angularVelocity * 0.5f;	
+		//angularVelocity = 0.0f;
+		//spinDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+	}
 
 	position.x = (position.x + velocity.x*deltaTime);
 	position.y = (position.y + velocity.y*deltaTime);
@@ -51,6 +61,16 @@ glm::vec3 Ball::euler(GLfloat deltaTime)
 	velocity.z = velocity.z + acceleration.z*deltaTime;
 
 	return position;
+}
+
+glm::vec3 Ball::getSpinDirection()
+{
+	return spinDirection;
+}
+
+float Ball::getAngularVelocity()
+{
+	return angularVelocity;
 }
 
 glm::vec3 Ball::getPosition()
