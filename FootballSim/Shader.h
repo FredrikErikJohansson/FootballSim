@@ -7,6 +7,10 @@
 
 #include <GL\glew.h>
 
+#include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
+
 class Shader
 {
 public:
@@ -26,6 +30,10 @@ public:
 	GLuint GetDiffuseIntensityLocation();
 	GLuint GetDirectionLocation();
 
+	void SetTexture(GLuint textureUnit);
+	void SetDirectionalShadowMap(GLuint textureUnit);
+	void SetDirectionalLightTransform(glm::mat4* lTransform);
+
 	void UseShader();
 	void ClearShader();
 
@@ -33,7 +41,7 @@ public:
 
 private:
 	GLuint shaderID, uniformProjection, uniformModel, uniformView;
-	GLuint uniformAmbientIntensity, uniformAmbientColour, uniformDiffuseIntensity, uniformDirection;
+	GLuint uniformAmbientIntensity, uniformAmbientColour, uniformDiffuseIntensity, uniformDirection, uniformTexture, uniformDirectionalShadowMap, uniformDirectionalLightTransform;
 
 	void CompileShader(const char* vertexCode, const char* fragmentCode);
 	void AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType);
