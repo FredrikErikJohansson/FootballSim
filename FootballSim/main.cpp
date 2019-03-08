@@ -23,6 +23,8 @@
 
 #include "Model.h"
 
+#include "Skybox.h"
+
 float rotate = 0.0f;
 
 // Window dimensions
@@ -43,28 +45,19 @@ Model ballMod;
 
 Light mainLight;
 
+Skybox skybox;
+
 //W,Vb,xAngle,yAngle,spinDir
 float angularVelocity = 80.0f;
 glm::vec3 spinDirection = glm::vec3(0.0f, 1.0f, 0.0f);
 float initVelocity = 36.0f;
 float xAngle = 0.0f;
 float yAngle = 45.0f;
+glm::vec3 ballStartPosition = glm::vec3(20.0f, 0.0f, 10.0f);
 Ball myBall(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
-
-bool direction = true;
-float triOffset = 0.0f;
-float triMaxOffset = 0.7f;
-float triIncrement = 0.005f;
-
-float curAngle = 0.0f;
-
-bool sizeDirection = true;
-float curSize = 0.4f;
-float maxSize = 0.8f;
-float minSize = 0.1f;
 
 // Vertex Shader code
 static const char* vShader = "Shaders/shader.vert";
@@ -84,8 +77,6 @@ void CreateShaders()
 
 void RenderScene()
 {
-	glm::vec3 ballStartPosition = glm::vec3(20.0f, 0.0f, 10.0f);
-
 	glm::mat4 model = glm::mat4(1.0f);
 	bool* keys = mainWindow.getsKeys();
 	if (keys[GLFW_KEY_F])
@@ -110,8 +101,6 @@ void RenderScene()
 
 	model = glm::scale(model, glm::vec3(0.06f, 0.06f, 0.06f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-	//glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-	//glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 	ballMod.RenderModel();
 
 	model = glm::mat4(1.0f);
@@ -146,6 +135,14 @@ void DirectionalShadowMapPass(Light* light)
 
 void RenderPass(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 {
+	glViewport(0, 0, 1366, 768);
+
+	// Clear window
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	skybox.DrawSkybox(viewMatrix, projectionMatrix);
+
 	shaderList[0].UseShader();
 
 	uniformModel = shaderList[0].GetModelLocation();
@@ -155,12 +152,6 @@ void RenderPass(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 	uniformAmbientIntensity = shaderList[0].GetAmbientIntensityLocation();
 	uniformDirection = shaderList[0].GetDirectionLocation();
 	uniformDiffuseIntensity = shaderList[0].GetDiffuseIntensityLocation();
-
-	glViewport(0, 0, 1366, 768);
-
-	// Clear window
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 	glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
@@ -194,7 +185,17 @@ int main()
 	ballMod = Model();
 	ballMod.LoadModel("Models/soccerball.obj");
 
-	mainLight = Light(2048, 2048, 1.0f, 1.0f, 1.0f, 0.4f, 34.0f, -150.0f, -66.0f, 0.4f);
+	mainLight = Light(2048, 2048, 0.9f, 0.9f, 1.0f, 0.4f, 34.0f, -150.0f, -66.0f, 0.5f);
+
+	std::vector<std::string> skyboxFaces;
+	skyboxFaces.push_back("Textures/Skybox/bloody-heresy_rt.tga");
+	skyboxFaces.push_back("Textures/Skybox/bloody-heresy_lf.tga");
+	skyboxFaces.push_back("Textures/Skybox/bloody-heresy_up.tga");
+	skyboxFaces.push_back("Textures/Skybox/bloody-heresy_dn.tga");
+	skyboxFaces.push_back("Textures/Skybox/bloody-heresy_bk.tga");
+	skyboxFaces.push_back("Textures/Skybox/bloody-heresy_ft.tga");
+
+	skybox = Skybox(skyboxFaces);
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
 

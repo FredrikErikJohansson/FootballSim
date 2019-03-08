@@ -19,6 +19,7 @@ public:
 	void CreateFromString(const char* vertexCode, const char* fragmentCode);
 	void CreateFromFiles(const char* vertexLocation, const char* fragmentLocation);
 	
+	void Validate();
 
 	std::string ReadFile(const char* fileLocation);
 
