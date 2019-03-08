@@ -13,6 +13,7 @@ public:
 	glm::vec3 getSpinDirection();
 	float getAngularVelocity();
 	void kick();
+	void reset(float _angularVelocity, float _initVelocity, float _xAngle, float _yAngle, glm::vec3 _spinDirection);
 	bool getHasBeenKicked();
 
 	~Ball();

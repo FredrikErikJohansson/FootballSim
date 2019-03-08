@@ -44,9 +44,12 @@ Model ballMod;
 Light mainLight;
 
 //W,Vb,xAngle,yAngle,spinDir
-float angularVelocity123 = 80.0f;
+float angularVelocity = 80.0f;
 glm::vec3 spinDirection = glm::vec3(0.0f, 1.0f, 0.0f);
-Ball myBall(angularVelocity123, 36.0f, 0.0f, 45.0f, spinDirection);
+float initVelocity = 36.0f;
+float xAngle = 0.0f;
+float yAngle = 45.0f;
+Ball myBall(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
@@ -87,17 +90,22 @@ void RenderScene()
 	{
 		myBall.kick();
 	}
+	if (keys[GLFW_KEY_R])
+	{
+		myBall.reset(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
+	}
 	if (myBall.getHasBeenKicked())
 	{
 		model = glm::translate(model, myBall.euler(deltaTime));
 		rotate -= myBall.getAngularVelocity() / 1000.0f;
-		spinDirection = myBall.getSpinDirection();
-		model = glm::rotate(model, rotate, spinDirection);
+		glm::vec3 spinDirectionDummy = myBall.getSpinDirection();
+		model = glm::rotate(model, rotate, spinDirectionDummy);
 	}
 
-	model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
-	model = glm::translate(model, glm::vec3(0.0f, 10.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.06f, 0.06f, 0.06f));
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+	//glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 	//glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 	ballMod.RenderModel();
 
@@ -107,8 +115,8 @@ void RenderScene()
 	nanosuit.RenderModel();
 
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(-80.0f, 0.0f, 130.0f));
-	model = glm::scale(model, glm::vec3(0.0017f, 0.0015f, 0.0017f));
+	model = glm::translate(model, glm::vec3(-80.0f, 0.0f, 120.0f));
+	model = glm::scale(model, glm::vec3(1.8f, 1.8f, 1.8f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	stadiumMod.RenderModel();
 }
@@ -164,6 +172,7 @@ void RenderPass(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 int main()
 {
 	mainWindow = Window(1366, 768);
+	//W,Vb,xAngle,yAngle,spinDir
 	mainWindow.Initialise();
 
 	CreateShaders();
