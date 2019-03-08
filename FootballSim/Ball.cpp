@@ -28,7 +28,7 @@ Ball::Ball(float _angularVelocity, float _initVelocity, float _xAngle, float _yA
 	position = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
-glm::vec3 Ball::euler(GLfloat deltaTime)
+glm::vec3 Ball::euler(GLfloat deltaTime, glm::vec3 ballStartPosition)
 {
 	glm::vec3 acceleration;
 
@@ -42,7 +42,11 @@ glm::vec3 Ball::euler(GLfloat deltaTime)
 	acceleration.y = (-mass*gravity-K * velocityAbs * velocity.y - Kl * (spinDirection.z*velocity.x - spinDirection.x*velocity.z)) / mass;
 	acceleration.z = (-K * velocityAbs*velocity.z - Kl * (spinDirection.x*velocity.y - spinDirection.y*velocity.x)) / mass;
 
-	if (velocity.x < 0.1f && velocity.z < 0.1f && position.y < 0.0f) return position;
+	if (velocity.x < 0.1f && velocity.z < 0.1f && position.y < 0.0f)
+	{
+		angularVelocity -= angularVelocity * 0.2f;
+		return position;
+	}
 
 	if (position.y < 0.0f && hasBeenKicked)
 	{
@@ -50,8 +54,17 @@ glm::vec3 Ball::euler(GLfloat deltaTime)
 		velocity.y = -COR*velocity.y;
 		velocity.z = COR*velocity.z;
 		position.y = 0.0f;
-		spinDirection = glm::vec3(velocity.x / glm::length(velocity), velocity.y / glm::length(velocity), 0.0f);
-		angularVelocity -= angularVelocity * 0.5f;	
+		spinDirection = glm::vec3(-velocity.z / glm::length(velocity), velocity.y / glm::length(velocity), velocity.x / glm::length(velocity));
+		angularVelocity -= angularVelocity * 0.2f;	
+	}
+	if (position.z < (-93.0f - ballStartPosition.z) && hasBeenKicked)
+	{
+		velocity.x = 0.8f * velocity.x;
+		velocity.y = 0.8f * velocity.y;
+		velocity.z = -0.8f * velocity.z;
+		position.z = -93.0f - ballStartPosition.z;
+		spinDirection = glm::vec3(-velocity.z / glm::length(velocity), velocity.y / glm::length(velocity), velocity.x / glm::length(velocity));
+		angularVelocity -= angularVelocity * 0.4f;
 	}
 
 	position.x = (position.x + velocity.x*deltaTime);

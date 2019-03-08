@@ -8,7 +8,7 @@ class Ball
 public:
 	Ball(float _angularVelocity, float _initVelocity, float _xAngle, float _yAngle, glm::vec3 _spinDirection);
 
-	glm::vec3 euler(GLfloat deltaTime);
+	glm::vec3 euler(GLfloat deltaTime, glm::vec3 ballStartPosition);
 	glm::vec3 getPosition();
 	glm::vec3 getSpinDirection();
 	float getAngularVelocity();

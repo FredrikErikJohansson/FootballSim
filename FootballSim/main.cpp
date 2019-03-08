@@ -42,18 +42,20 @@ Camera camera;
 Model nanosuit;
 Model stadiumMod;
 Model ballMod;
+Model wallMod;
+Model goalMod;
 
 Light mainLight;
 
 Skybox skybox;
 
 //W,Vb,xAngle,yAngle,spinDir
-float angularVelocity = 80.0f;
+float angularVelocity = 100.0f;
 glm::vec3 spinDirection = glm::vec3(0.0f, 1.0f, 0.0f);
-float initVelocity = 36.0f;
-float xAngle = 0.0f;
-float yAngle = 45.0f;
-glm::vec3 ballStartPosition = glm::vec3(20.0f, 0.0f, 10.0f);
+float initVelocity = 40.0f;
+float xAngle = -20.0f;
+float yAngle = 20.0f;
+glm::vec3 ballStartPosition = glm::vec3(0.0f, 0.31f, -35.0f);
 Ball myBall(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
 
 GLfloat deltaTime = 0.0f;
@@ -89,8 +91,8 @@ void RenderScene()
 	}
 	if (myBall.getHasBeenKicked())
 	{
-		model = glm::translate(model, myBall.euler(deltaTime) + ballStartPosition);
-		rotate -= myBall.getAngularVelocity() / 1000.0f;
+		model = glm::translate(model, myBall.euler(deltaTime, ballStartPosition) + ballStartPosition);
+		rotate -= myBall.getAngularVelocity() / 200.0f;
 		glm::vec3 spinDirectionDummy = myBall.getSpinDirection();
 		model = glm::rotate(model, rotate, spinDirectionDummy);
 	}
@@ -114,6 +116,18 @@ void RenderScene()
 	model = glm::scale(model, glm::vec3(1.8f, 1.8f, 1.8f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	stadiumMod.RenderModel();
+
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -50.0f));
+	model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));
+	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+	wallMod.RenderModel();
+
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -93.0f));
+	model = glm::scale(model, glm::vec3(0.45f, 0.45f, 0.45f));
+	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+	goalMod.RenderModel();
 }
 
 void DirectionalShadowMapPass(Light* light)
@@ -184,6 +198,12 @@ int main()
 
 	ballMod = Model();
 	ballMod.LoadModel("Models/soccerball.obj");
+
+	wallMod = Model();
+	wallMod.LoadModel("Models/wall.obj");
+
+	goalMod = Model();
+	goalMod.LoadModel("Models/goal.obj");
 
 	mainLight = Light(2048, 2048, 0.9f, 0.9f, 1.0f, 0.4f, 34.0f, -150.0f, -66.0f, 0.5f);
 
