@@ -21,7 +21,7 @@ Light::Light(GLuint shadowWidth, GLuint shadowHeight, GLfloat red, GLfloat green
 	shadowMap = new ShadowMap();
 	shadowMap->Init(shadowWidth, shadowHeight);
 
-	lightProj = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 100.0f);
+	lightProj = glm::ortho(-300.0f, 300.0f, -400.0f, 400.0f, 0.1f, 1000.0f);
 }
 
 void Light::UseLight(GLfloat ambientIntensityLocation, GLfloat ambientColourLocation,

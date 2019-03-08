@@ -84,6 +84,8 @@ void CreateShaders()
 
 void RenderScene()
 {
+	glm::vec3 ballStartPosition = glm::vec3(20.0f, 0.0f, 10.0f);
+
 	glm::mat4 model = glm::mat4(1.0f);
 	bool* keys = mainWindow.getsKeys();
 	if (keys[GLFW_KEY_F])
@@ -96,14 +98,17 @@ void RenderScene()
 	}
 	if (myBall.getHasBeenKicked())
 	{
-		model = glm::translate(model, myBall.euler(deltaTime));
+		model = glm::translate(model, myBall.euler(deltaTime) + ballStartPosition);
 		rotate -= myBall.getAngularVelocity() / 1000.0f;
 		glm::vec3 spinDirectionDummy = myBall.getSpinDirection();
 		model = glm::rotate(model, rotate, spinDirectionDummy);
 	}
+	else
+	{
+		model = glm::translate(model, ballStartPosition);
+	}
 
 	model = glm::scale(model, glm::vec3(0.06f, 0.06f, 0.06f));
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	//glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 	//glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
@@ -111,11 +116,12 @@ void RenderScene()
 
 	model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+	model = glm::translate(model, glm::vec3(20.0f, 0.0f, -20.0f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	nanosuit.RenderModel();
 
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(-80.0f, 0.0f, 120.0f));
+	model = glm::translate(model, glm::vec3(-125.0f, 0.0f, 204.0f));
 	model = glm::scale(model, glm::vec3(1.8f, 1.8f, 1.8f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	stadiumMod.RenderModel();
@@ -188,7 +194,7 @@ int main()
 	ballMod = Model();
 	ballMod.LoadModel("Models/soccerball.obj");
 
-	mainLight = Light(2048, 2048, 1.0f, 1.0f, 1.0f, 0.4f, 0.0f, -15.0f, -10.0f, 0.3f);
+	mainLight = Light(2048, 2048, 1.0f, 1.0f, 1.0f, 0.4f, 34.0f, -150.0f, -66.0f, 0.4f);
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
 
