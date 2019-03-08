@@ -78,6 +78,14 @@ void Camera::update()
 	up = glm::normalize(glm::cross(right, front));
 }
 
+void Camera::move(glm::vec3 _position, GLfloat _yaw, GLfloat _pitch)
+{
+	position = _position;
+	yaw = _yaw;
+	pitch = _pitch;
+	update();
+}
+
 
 Camera::~Camera()
 {

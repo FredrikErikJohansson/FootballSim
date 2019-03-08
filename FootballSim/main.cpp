@@ -55,8 +55,13 @@ glm::vec3 spinDirection = glm::vec3(0.0f, 1.0f, 0.0f);
 float initVelocity = 40.0f;
 float xAngle = -20.0f;
 float yAngle = 20.0f;
-glm::vec3 ballStartPosition = glm::vec3(0.0f, 0.31f, -35.0f);
+glm::vec3 ballStartPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 Ball myBall(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
+
+bool setupStage = true;
+glm::vec3 cameraSetupPosition = glm::vec3(0.0f, 110.0f, 0.0f);
+GLfloat cameraSetupYaw = -90.0f;
+GLfloat cameraSetupPitch = -70.0f;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
@@ -80,16 +85,11 @@ void CreateShaders()
 void RenderScene()
 {
 	glm::mat4 model = glm::mat4(1.0f);
-	bool* keys = mainWindow.getsKeys();
-	if (keys[GLFW_KEY_F])
+	if (setupStage)
 	{
-		myBall.kick();
+		model = glm::translate(model, ballStartPosition);
 	}
-	if (keys[GLFW_KEY_R])
-	{
-		myBall.reset(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
-	}
-	if (myBall.getHasBeenKicked())
+	else if (myBall.getHasBeenKicked())
 	{
 		model = glm::translate(model, myBall.euler(deltaTime, ballStartPosition) + ballStartPosition);
 		rotate -= myBall.getAngularVelocity() / 200.0f;
@@ -188,7 +188,7 @@ int main()
 
 	CreateShaders();
 
-	camera = Camera(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.5f);
+	camera = Camera(cameraSetupPosition, glm::vec3(0.0f, 1.0f, 0.0f), cameraSetupYaw, cameraSetupPitch, 5.0f, 0.5f);
 
 	nanosuit = Model();
 	nanosuit.LoadModel("Models/nanosuit.obj");
@@ -234,13 +234,40 @@ int main()
 
 		glfwPollEvents();
 
-		camera.keyControl(mainWindow.getsKeys(), deltaTime);
-		camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+		if (setupStage)
+		{
+			ballStartPosition.x += mainWindow.getXChange() * 0.1f;
+			ballStartPosition.z -= mainWindow.getYChange() * 0.1f;
+		}
+		else
+		{
+			camera.keyControl(mainWindow.getsKeys(), deltaTime);
+			camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+		}
+			
+
+		bool* keys = mainWindow.getsKeys();
+		if (!setupStage && keys[GLFW_KEY_F])
+		{
+			myBall.kick();
+		}
+		if (!setupStage && keys[GLFW_KEY_R])
+		{
+			myBall.reset(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
+			camera.move(cameraSetupPosition, cameraSetupYaw, cameraSetupPitch);
+			ballStartPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+			setupStage = true;
+		}
+		if (setupStage && keys[GLFW_KEY_SPACE])
+		{
+			camera.move(ballStartPosition + glm::vec3(0.0f, 10.0f, 20.0f), -90.0f, 0.0f);
+			setupStage = false;
+		}
 		
 		DirectionalShadowMapPass(&mainLight);
 		RenderPass(camera.calculateViewMatrix(), projection);
 		
-		//glUseProgram(0);
+		glUseProgram(0);
 
 		mainWindow.swapBuffers();
 	}

@@ -18,6 +18,8 @@ public:
 
 	glm::mat4 calculateViewMatrix();
 
+	void move(glm::vec3 position, GLfloat yaw, GLfloat pitch);
+
 	~Camera();
 
 private:
