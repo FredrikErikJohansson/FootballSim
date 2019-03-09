@@ -100,19 +100,25 @@ bool Ball::getHasBeenKicked()
 
 void Ball::reset(float _angularVelocity, float _initVelocity, float _xAngle, float _yAngle, glm::vec3 _spinDirection)
 {
+	hasBeenKicked = false;
+
 	const float PI = atan(1.0f)*4.0f;
 
-	hasBeenKicked = false;
-	position = glm::vec3(0.0f, 0.0f, 0.0f);
 	angularVelocity = _angularVelocity;
-	spinDirection = _spinDirection;
-
+	initVelocity = _initVelocity;
 	xAngle = (PI)-(_xAngle * PI) / 180.0f;
 	yAngle = (PI / 2) - (_yAngle * PI) / 180.0f;
 
-	velocity.x = _initVelocity * sin(yAngle)*sin(xAngle);
-	velocity.y = _initVelocity * cos(yAngle);
-	velocity.z = _initVelocity * sin(yAngle)*cos(xAngle);
+	spinDirection = _spinDirection;
+
+	liftConst = (spinConst*angularVelocity*radius) / initVelocity;
+	K = (airDensity*dragConst*crossArea) / 2.0f;
+
+	velocity.x = initVelocity * sin(yAngle)*sin(xAngle);
+	velocity.y = initVelocity * cos(yAngle);
+	velocity.z = initVelocity * sin(yAngle)*cos(xAngle);
+
+	position = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
 void Ball::kick()

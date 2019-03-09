@@ -26,8 +26,9 @@ public:
 
 	~Window();
 
-private:
 	GLFWwindow *mainWindow;
+
+private:
 
 	GLint width, height;
 	GLint bufferWidth, bufferHeight;

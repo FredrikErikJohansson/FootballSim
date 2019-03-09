@@ -8,6 +8,8 @@
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 #include <assimp/Importer.hpp>
+#include "imgui\imgui.h"
+#include "imgui\imgui_impl_glfw_gl3.h"
 
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
@@ -55,9 +57,10 @@ glm::vec3 spinDirection = glm::vec3(0.0f, 1.0f, 0.0f);
 float initVelocity = 40.0f;
 float xAngle = -20.0f;
 float yAngle = 20.0f;
-glm::vec3 ballStartPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 ballStartPosition = glm::vec3(0.0f, 0.31f, 0.0f);
 Ball myBall(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
 
+bool settingsActive = false;
 bool setupStage = true;
 glm::vec3 cameraSetupPosition = glm::vec3(0.0f, 110.0f, 0.0f);
 GLfloat cameraSetupYaw = -90.0f;
@@ -221,7 +224,11 @@ int main()
 
 	glm::mat4 projection = glm::perspective(45.0f, (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 1000.0f);
 
-	
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui_ImplGlfwGL3_Init(mainWindow.mainWindow, true);
+	ImGui::StyleColorsDark();
+
 	// Loop until window closed
 	while (!mainWindow.getShouldClose())
 	{
@@ -234,12 +241,14 @@ int main()
 
 		glfwPollEvents();
 
+		ImGui_ImplGlfwGL3_NewFrame();
+
 		if (setupStage)
 		{
 			ballStartPosition.x += mainWindow.getXChange() * 0.1f;
 			ballStartPosition.z -= mainWindow.getYChange() * 0.1f;
 		}
-		else
+		else if (!settingsActive)
 		{
 			camera.keyControl(mainWindow.getsKeys(), deltaTime);
 			camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
@@ -249,28 +258,57 @@ int main()
 		bool* keys = mainWindow.getsKeys();
 		if (!setupStage && keys[GLFW_KEY_F])
 		{
+			if (!myBall.getHasBeenKicked())
+			{
+				myBall.reset(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
+			}
 			myBall.kick();
 		}
 		if (!setupStage && keys[GLFW_KEY_R])
 		{
 			myBall.reset(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
 			camera.move(cameraSetupPosition, cameraSetupYaw, cameraSetupPitch);
-			ballStartPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+			//ballStartPosition = glm::vec3(0.0f, 0.31f, 0.0f);
 			setupStage = true;
 		}
 		if (setupStage && keys[GLFW_KEY_SPACE])
 		{
-			camera.move(ballStartPosition + glm::vec3(0.0f, 10.0f, 20.0f), -90.0f, 0.0f);
+			camera.move(ballStartPosition + glm::vec3(0.0f, 5.0f, 20.0f), -90.0f, 0.0f);
 			setupStage = false;
+		}
+		if (keys[GLFW_KEY_LEFT_CONTROL])
+		{
+			settingsActive = true;
+			glfwSetInputMode(mainWindow.mainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
+		else
+		{
+			settingsActive = false;
+			glfwSetInputMode(mainWindow.mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		}
 		
 		DirectionalShadowMapPass(&mainLight);
 		RenderPass(camera.calculateViewMatrix(), projection);
+
+		ImGui::SetWindowCollapsed(true);
+		ImGui::Begin("Settings");
+		ImGui::SliderFloat("Initial Velocity", &initVelocity, 0.0f, 50.0f);
+		ImGui::SliderFloat("Angular Velocity", &angularVelocity, -100.0f, 100.0f);
+		ImGui::SliderFloat("X Angle", &xAngle, -89.0f, 89.0f);
+		ImGui::SliderFloat("Y Angle", &yAngle, 0.0f, 89.0f);
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::End();
+
+		ImGui::Render();
+		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 		
 		glUseProgram(0);
 
 		mainWindow.swapBuffers();
 	}
+
+	ImGui_ImplGlfwGL3_Shutdown();
+	ImGui::DestroyContext();
 
 	return 0;
 }
