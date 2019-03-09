@@ -19,6 +19,7 @@ public:
 	glm::mat4 calculateViewMatrix();
 
 	void move(glm::vec3 position, GLfloat yaw, GLfloat pitch);
+	void followBall(glm::vec3 ballPosition);
 
 	~Camera();
 

@@ -60,6 +60,7 @@ float yAngle = 20.0f;
 glm::vec3 ballStartPosition = glm::vec3(0.0f, 0.31f, 0.0f);
 Ball myBall(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
 
+bool shouldFollowBall = false;
 bool settingsActive = false;
 bool setupStage = true;
 glm::vec3 cameraSetupPosition = glm::vec3(0.0f, 110.0f, 0.0f);
@@ -254,7 +255,6 @@ int main()
 			camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
 			
-
 		bool* keys = mainWindow.getsKeys();
 		if (!setupStage && keys[GLFW_KEY_F])
 		{
@@ -273,7 +273,10 @@ int main()
 		}
 		if (setupStage && keys[GLFW_KEY_SPACE])
 		{
-			camera.move(ballStartPosition + glm::vec3(0.0f, 5.0f, 20.0f), -90.0f, 0.0f);
+			if (!shouldFollowBall)
+			{
+				camera.move(ballStartPosition + glm::vec3(0.0f, 5.0f, 20.0f), -90.0f, 0.0f);
+			}
 			setupStage = false;
 		}
 		if (keys[GLFW_KEY_LEFT_CONTROL])
@@ -286,6 +289,11 @@ int main()
 			settingsActive = false;
 			glfwSetInputMode(mainWindow.mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		}
+
+		if (!setupStage && shouldFollowBall)
+		{
+			camera.followBall(ballStartPosition + myBall.getPosition());
+		}
 		
 		DirectionalShadowMapPass(&mainLight);
 		RenderPass(camera.calculateViewMatrix(), projection);
@@ -296,6 +304,7 @@ int main()
 		ImGui::SliderFloat("Angular Velocity", &angularVelocity, -100.0f, 100.0f);
 		ImGui::SliderFloat("X Angle", &xAngle, -89.0f, 89.0f);
 		ImGui::SliderFloat("Y Angle", &yAngle, 0.0f, 89.0f);
+		ImGui::Checkbox("Follow Ball?", &shouldFollowBall);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 
