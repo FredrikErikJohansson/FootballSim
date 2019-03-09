@@ -248,6 +248,7 @@ int main()
 		{
 			ballStartPosition.x += mainWindow.getXChange() * 0.1f;
 			ballStartPosition.z -= mainWindow.getYChange() * 0.1f;
+			camera.move(ballStartPosition + glm::vec3(0.0f, 60.0f, 25.0f), cameraSetupYaw, cameraSetupPitch);
 		}
 		else if (!settingsActive)
 		{
@@ -275,7 +276,7 @@ int main()
 		{
 			myBall.reset(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
 		}
-		if (setupStage && keys[GLFW_KEY_SPACE])
+		if (setupStage && ImGui::IsMouseClicked(0))
 		{
 			if (!shouldFollowBall)
 			{
@@ -306,7 +307,7 @@ int main()
 		ImGui::Begin("Settings");
 		ImGui::SliderFloat("Initial Velocity", &initVelocity, 0.0f, 50.0f);
 		ImGui::SliderFloat("Angular Velocity", &angularVelocity, -100.0f, 100.0f);
-		ImGui::SliderFloat("X Angle", &xAngle, -89.0f, 89.0f);
+		ImGui::SliderFloat("X Angle", &xAngle, -60.0f, 60.0f);
 		ImGui::SliderFloat("Y Angle", &yAngle, 0.0f, 89.0f);
 		ImGui::Checkbox("Follow Ball?", &shouldFollowBall);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
