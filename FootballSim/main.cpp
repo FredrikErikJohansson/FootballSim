@@ -264,12 +264,16 @@ int main()
 			}
 			myBall.kick();
 		}
-		if (!setupStage && keys[GLFW_KEY_R])
+		if (!setupStage && keys[GLFW_KEY_Q])
 		{
 			myBall.reset(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
 			camera.move(cameraSetupPosition, cameraSetupYaw, cameraSetupPitch);
 			//ballStartPosition = glm::vec3(0.0f, 0.31f, 0.0f);
 			setupStage = true;
+		}
+		if (!setupStage && keys[GLFW_KEY_R])
+		{
+			myBall.reset(angularVelocity, initVelocity, xAngle, yAngle, spinDirection);
 		}
 		if (setupStage && keys[GLFW_KEY_SPACE])
 		{
