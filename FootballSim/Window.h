@@ -18,6 +18,9 @@ public:
 
 	bool getShouldClose() { return glfwWindowShouldClose(mainWindow); }
 
+	GLfloat getWidth() { return width; }
+	GLfloat getHeight() { return height; }
+
 	bool* getsKeys() { return keys; }
 	GLfloat getXChange();
 	GLfloat getYChange();

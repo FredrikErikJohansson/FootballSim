@@ -53,7 +53,7 @@ glm::vec3 Ball::euler(GLfloat deltaTime, glm::vec3 ballStartPosition)
 		velocity.x = COR*velocity.x;
 		velocity.y = -COR*velocity.y;
 		velocity.z = COR*velocity.z;
-		position.y = 0.0f;
+		position.y = 0.1f;
 		spinDirection = glm::vec3(-velocity.z / glm::length(velocity), velocity.y / glm::length(velocity), velocity.x / glm::length(velocity));
 		angularVelocity -= angularVelocity * 0.2f;	
 	}

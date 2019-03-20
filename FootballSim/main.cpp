@@ -110,12 +110,6 @@ void RenderScene()
 	ballMod.RenderModel();
 
 	model = glm::mat4(1.0f);
-	model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-	model = glm::translate(model, glm::vec3(20.0f, 0.0f, -20.0f));
-	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-	nanosuit.RenderModel();
-
-	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(-125.0f, 0.0f, 204.0f));
 	model = glm::scale(model, glm::vec3(1.8f, 1.8f, 1.8f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -153,8 +147,7 @@ void DirectionalShadowMapPass(Light* light)
 
 void RenderPass(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 {
-	glViewport(0, 0, 1366, 768);
-
+	glViewport(0, 0, mainWindow.getWidth(), mainWindow.getHeight());
 	// Clear window
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
